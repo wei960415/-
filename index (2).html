@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP 系統 期中考題庫 100 題互動刷題網</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --correct: #16a34a;
+            --correct-bg: #f0fdf4;
+            --correct-border: #86efac;
+            --wrong: #dc2626;
+            --wrong-bg: #fef2f2;
+            --wrong-border: #fca5a5;
+            --border: #e2e8f0;
+            --explain-bg: #eff6ff;
+            --explain-border: #bfdbfe;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px 12px;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Mode Setup Card */
+        .setup-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .setup-card h2 {
+            font-size: 1.3rem;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            background: white;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .mode-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .mode-radio-btn {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .mode-radio-btn:hover {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        .mode-radio-btn.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.98rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .start-btn {
+            background: var(--primary);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 12px 36px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            margin-top: 10px;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Controls Area during Quiz */
+        .quiz-controls {
+            background: var(--card-bg);
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .info-tag {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stat-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .stat-correct { color: var(--correct); background: var(--correct-bg); }
+        .stat-wrong { color: var(--wrong); background: var(--wrong-bg); }
+
+        /* Quiz Card */
+        .quiz-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .q-tag {
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .q-num {
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .q-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: var(--text);
+            white-space: pre-line;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: white;
+            text-align: left;
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.selected-correct {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: var(--correct) !important;
+            font-weight: 600;
+        }
+
+        .option-btn.selected-wrong {
+            background: var(--wrong-bg) !important;
+            border-color: var(--wrong-border) !important;
+            color: var(--wrong) !important;
+            font-weight: 600;
+        }
+
+        .option-btn.show-truth {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: var(--correct) !important;
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-box.correct {
+            display: block;
+            background: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: var(--correct);
+        }
+
+        .feedback-box.wrong {
+            display: block;
+            background: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: var(--wrong);
+        }
+
+        .explanation-box {
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: var(--explain-bg);
+            border: 1px solid var(--explain-border);
+            border-radius: 8px;
+            color: #1e40af;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        /* Buttons & Summary */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-restart {
+            background: #16a34a;
+        }
+
+        .btn-restart:hover {
+            background: #15803d;
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .pagination-bar {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .page-num {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .page-num.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-num.done-correct {
+            border-color: var(--correct);
+            color: var(--correct);
+        }
+
+        .page-num.done-wrong {
+            border-color: var(--wrong);
+            color: var(--wrong);
+        }
+
+        /* Result Card */
+        .result-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 16px 0;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 10px 8px; }
+            header { padding: 18px 14px; }
+            header h1 { font-size: 1.4rem; }
+            .quiz-card { padding: 16px; }
+            .mode-options { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎓 ERP 系統 期中考題庫 100 題互動刷題網</h1>
+        <p>全章節 100 單選題 ‧ 隨機打亂題目與選項 ‧ 附詳細觀念解析</p>
+    </header>
+
+    <!-- SETUP VIEW -->
+    <div id="setupView" class="setup-card">
+        <h2>🎯 請選擇測驗模式與章節範圍</h2>
+
+        <div class="form-group">
+            <label>1. 選擇作答章節範圍：</label>
+            <select id="scopeSelect" class="select-input">
+                <option value="ALL">全部章節合輯 (共 100 題)</option>
+                <option value="CH01 概論與發展">CH01 概論與發展</option>
+                <option value="CH02 流程管理與ARIS">CH02 流程管理與ARIS</option>
+                <option value="CH04 生產規劃與控制">CH04 生產規劃與控制</option>
+                <option value="SAP S/4HANA 核心">SAP S/4HANA 核心</option>
+                <option value="Global Bike 實務">Global Bike 實務</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>2. 選擇題目排序模式：</label>
+            <div class="mode-options">
+                <div class="mode-radio-btn active" id="modeBtnSequential" onclick="setOrderMode('sequential')">
+                    📌 依題庫順序作答
+                </div>
+                <div class="mode-radio-btn" id="modeBtnRandom" onclick="setOrderMode('random')">
+                    🔀 隨機打亂題目順序
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>3. 進階選項打亂：</label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="shuffleOptionsCheck" checked>
+                🔀 隨機打亂選項 (ABCD 順序隨機重新排序)
+            </label>
+        </div>
+
+        <button class="start-btn" onclick="startQuiz()">🚀 開始作答</button>
+    </div>
+
+    <!-- QUIZ VIEW (Hidden by default) -->
+    <div id="quizView" style="display: none;">
+        <div class="quiz-controls">
+            <span class="info-tag" id="currentModeTag">順序模式 | 100題</span>
+            <div class="stats">
+                <span class="stat-badge stat-correct">✓ 正確: <span id="correctCount">0</span></span>
+                <span class="stat-badge stat-wrong">✗ 錯誤: <span id="wrongCount">0</span></span>
+            </div>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="exitToSetup()">⚙️ 重設模式</button>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" onclick="changeQuestion(-1)">← 上一題</button>
+            <button class="btn btn-restart" onclick="restartCurrentQuiz()">🔄 重新作答（重新隨機打亂）</button>
+            <button class="btn" id="nextBtn" onclick="changeQuestion(1)">下一題 →</button>
+        </div>
+
+        <div class="pagination-bar" id="paginationBar"></div>
+    </div>
+
+    <!-- RESULT VIEW (Hidden by default) -->
+    <div id="resultView" class="result-card" style="display: none;">
+        <h2>🎉 恭喜完成本次練習！</h2>
+        <div class="result-score" id="resultScoreText">90 / 100</div>
+        <p id="resultDetailText" style="margin-bottom: 24px; color: var(--text-light);"></p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <button class="btn btn-restart" onclick="restartCurrentQuiz()">🔄 重新作答（重新隨機打亂）</button>
+            <button class="btn btn-secondary" onclick="exitToSetup()">⚙️ 重新選擇題型/模式</button>
+        </div>
+    </div>
+
+    <script>
+        const rawDatabase = [{"id": 1, "chapter": "CH01 概論與發展", "title": "ERP (Enterprise Resource Planning) 系統最核心的核心目標為何？", "options": ["A. 取代所有企業基層員工", "B. 消除資訊孤島並實現企業跨部門資源整合", "C. 降低企業硬體採購成本", "D. 僅用於財務會計結帳"], "ans": "B", "explanation": "ERP 的核心宗旨為整合企業各功能部門之資料與流程，建立單一真實數據源 (Single Source of Truth)，消除資訊孤岛。"}, {"id": 2, "chapter": "CH01 概論與發展", "title": "ERP 系統演進歷程中，1960年代最早期的發展階段為何？", "options": ["A. MRP (Material Requirements Planning)", "B. MRP II (Manufacturing Resource Planning)", "C. SCM (Supply Chain Management)", "D. ERP II"], "ans": "A", "explanation": "ERP 演進起源於 1960 年代的物料需求規劃 (MRP)，用於計算物料需求與交期。"}, {"id": 3, "chapter": "CH01 概論與發展", "title": "下列 ERP 系統演進順序，何者完全正確？", "options": ["A. 閉迴路 MRP -> MRP -> ERP -> MRP II", "B. MRP II -> MRP -> ERP -> ERP II", "C. ERP -> MRP -> MRP II -> ERP II", "D. MRP -> 閉迴路 MRP -> MRP II -> ERP -> ERP II"], "ans": "D", "explanation": "演進順序為：MRP (1960s) -> 閉迴路 MRP (1970s) -> MRP II (1980s) -> ERP (1990s) -> ERP II (2000s+)。"}, {"id": 4, "chapter": "CH01 概論與發展", "title": "MRP II 相較於傳統 MRP，主要增加了哪項關鍵規劃領域？", "options": ["A. 電子商務 (e-Commerce)", "B. 顧客關係管理 (CRM)", "C. 製造資源與財務資金規劃", "D. 人工智慧預測"], "ans": "C", "explanation": "MRP II 將規劃範圍由單純物料延伸至製造資源 (如工時、設備) 及財務成本管理。"}, {"id": 5, "chapter": "CH01 概論與發展", "title": "企業成功導入 ERP 系統的三大核心支柱 (Pillars) 不包含下列何者？", "options": ["A. 企業流程 (Process)", "B. 資訊科技 (Technology)", "C. 導入方法論 (Methodology)", "D. 股票上市 (IPO)"], "ans": "A", "explanation": "ERP 成功的三大支柱為：優化的企業流程 (Process)、嚴謹的導入方法論 (Methodology) 及穩固的 IT 基礎架構 (Technology)。"}, {"id": 6, "chapter": "CH01 概論與發展", "title": "傳統企業依「職能部門」分工 (Functional Silos) 最常造成何種組織弊端？", "options": ["A. 員工專業能力過度提升", "B. 部門間資訊孤島與跨流程協調困難", "C. 生產效率無限制增加", "D. 客戶滿意度自動提高"], "ans": "B", "explanation": "本位主義與職能本位會形成資訊孤島 (Information Silos)，導致跨部門流程斷層。"}, {"id": 7, "chapter": "CH01 概論與發展", "title": "ERP II（擴展型 ERP）相較於傳統 ERP，最主要的擴展方向為何？", "options": ["A. 取消資料庫連結", "B. 僅將軟體安裝於個人電腦", "C. 縮小系統功能至單一部門", "D. 由企業內部流程延伸至外部供應鏈與客戶端"], "ans": "D", "explanation": "ERP II 結合 SCM、CRM 與協同商務，將資訊流延伸至企業邊界之外。"}, {"id": 8, "chapter": "CH01 概論與發展", "title": "商業智慧 (Business Intelligence, BI) 在 ERP 體系中的定位為何？", "options": ["A. 萃取 ERP 交易資料進行多維度決策分析", "B. 替代日常訂單輸入", "C. 僅用於列印紙本發票", "D. 管理實體倉庫門禁"], "ans": "A", "explanation": "BI 系統連結 ERP 歷史交易資料庫，提供高階主管決策支援與數據挖掘 (Data Mining)。"}, {"id": 9, "chapter": "CH01 概論與發展", "title": "下列何者「非」現代 ERP 系統具備的核心特性？", "options": ["A. 資料僅供單一部門獨立使用", "B. 共享中央即時資料庫", "C. 模組化且具高度整合性", "D. 內建產業最佳實務 (Best Practices)"], "ans": "A", "explanation": "ERP 強調跨部門資料共享，絕非單一部門獨立使用。"}, {"id": 10, "chapter": "CH01 概論與發展", "title": "MRP (物料需求規劃) 運算時的三大核心輸入資料不包括何者？", "options": ["A. 庫存狀態記錄 (Inventory Status)", "B. 物料清單 (BOM)", "C. 主生產排程 (MPS)", "D. 顧客滿意度調查表"], "ans": "C", "explanation": "MRP 運算三大輸入：主生產排程 (MPS)、物料清單 (BOM)、庫存狀態記錄 (Inventory Master)。"}, {"id": 11, "chapter": "CH01 概論與發展", "title": "閉迴路 MRP (Closed-loop MRP) 相較於早期 MRP，最主要的突破為何？", "options": ["A. 取消 BOM 結構", "B. 引進網頁連線介面", "C. 完全自動化採購", "D. 納入產能需求規劃 (CRP) 與實施回饋機制"], "ans": "D", "explanation": "閉迴路 MRP 加入了產能限制評估 (CRP) 與執行結果的回饋修訂機制。"}, {"id": 12, "chapter": "CH01 概論與發展", "title": "企業導入 ERP 時，修改現有流程以符合套裝軟體內建流程，稱作？", "options": ["A. 無痛升級", "B. 完全客製化 (Full Customization)", "C. 系統作廢再建", "D. 最佳實務 (Best Practices) 導向導入"], "ans": "D", "explanation": "採用套裝軟體標準流程即採用該產業累積之最佳實務 (Best Practices)。"}, {"id": 13, "chapter": "CH01 概論與發展", "title": "在 ERP 系統中，「交易資料 (Transaction Data)」的特性為何？", "options": ["A. 記錄日常商業活動且異動頻繁 (如銷售單、領料單)", "B. 數十年保持不變的基本資料", "C. 僅能由系統管理員修改", "D. 與業務流程無關"], "ans": "A", "explanation": "交易資料反映每日發生的商業事件（如 Order、Invoice），具時間性與頻繁變動性。"}, {"id": 14, "chapter": "CH01 概論與發展", "title": "下列何者屬於 ERP 系統中的「主資料 (Master Data)」？", "options": ["A. 客戶主檔與物料主檔", "B. 今日開立的銷售訂單", "C. 昨日扣款的會計傳票", "D. 本月生產入庫單"], "ans": "A", "explanation": "主資料（如物料、客戶、供應商主檔）為長期存在且被跨模組頻繁調用的基礎資料。"}, {"id": 15, "chapter": "CH01 概論與發展", "title": "企業若對 ERP 軟體進行大量「客製化 (Customization)」，最大的風險為何？", "options": ["A. 員工不需要任何教育訓練", "B. 系統運算速度自動提升十倍", "C. 軟體購買費用歸零", "D. 後續系統升級困難且維護成本大幅暴增"], "ans": "D", "explanation": "過度客製化會破壞套裝軟體結構，造成升級障礙與極高維護成本。"}, {"id": 16, "chapter": "CH01 概論與發展", "title": "ERP 系統如何實現全企業的「即時性 (Real-time)」運作？", "options": ["A. 資料一處輸入，中央資料庫即時更新全處共享", "B. 每日下班後人工統一彙整輸入", "C. 每週以郵件寄送 Excel 表格", "D. 透過紙本傳票逐級簽核"], "ans": "A", "explanation": "單一 Central Database 確保任何模組輸入資料時，相關帳務與庫存即時連動更新。"}, {"id": 17, "chapter": "CH01 概論與發展", "title": "在 ERP II 架構中，負責優化客戶互動與銷售管道管理的子系統為？", "options": ["A. SCM (供應鏈管理)", "B. CRM (顧客關係管理)", "C. PLM (產品生命週期管理)", "D. SRM (供應商關係管理)"], "ans": "B", "explanation": "CRM 專注於前端客戶端流程（行銷、銷售、售後服務）。"}, {"id": 18, "chapter": "CH01 概論與發展", "title": "供應鏈管理 (SCM) 在擴展型 ERP 中的核心目標為何？", "options": ["A. 僅管理企業內部財務", "B. 最大化單一工廠的原材料堆積", "C. 切斷與上游廠商的聯繫", "D. 最佳化從供應商至最終客戶的物流、資訊流與資金流"], "ans": "D", "explanation": "SCM 追求整體供應鏈夥伴間的協同合作與整體總成本最低化。"}, {"id": 19, "chapter": "CH01 概論與發展", "title": "統計顯示，企業導入 ERP 失敗的最主要原因通常為何？", "options": ["A. 程式語言版本太舊", "B. 電腦硬體螢幕太小", "C. 網路線傳輸速度過慢", "D. 組織變革管理不佳與使用者抗拒"], "ans": "D", "explanation": "人的因素與組織習慣改變（Change Management）是 ERP 專案成敗最大關鍵。"}, {"id": 20, "chapter": "CH01 概論與發展", "title": "現代新一代 ERP (如 SAP S/4HANA) 結合 IoT 與 AI 的主要價值為何？", "options": ["A. 替代企業所有高層經理人", "B. 增加員工手動打字工作量", "C. 實現預測性維護與智慧自動化營運決策", "D. 關閉所有網路連線"], "ans": "C", "explanation": "結合物聯網感測器與人工智慧，可進行預測性維護 (Predictive Maintenance) 與自動化排程。"}, {"id": 21, "chapter": "CH02 流程管理與ARIS", "title": "企業流程 (Business Process) 的基本定義為何？", "options": ["A. 為達成特定商業目標，由一連串具邏輯順序活動構成的組合", "B. 單一員工在一天內完成的所有雜務", "C. 企業財務報表上的數字總和", "D. 公司內部的組織架構樹狀圖"], "ans": "A", "explanation": "企業流程係指跨越職能、將 Input 轉化為對客戶有價值之 Output 的一連串邏輯活動。"}, {"id": 22, "chapter": "CH02 流程管理與ARIS", "title": "一個完整的加值性企業流程由哪四大元素所組成？", "options": ["A. 成本、利潤、股票、現金", "B. 輸入 (Input)、輸出 (Output)、資源 (Resource)、控制 (Control)", "C. 硬體、軟體、網路、人員", "D. 計畫、執行、考核、歸檔"], "ans": "B", "explanation": "系統觀點下加值流程 4 元素：Input (輸入), Output (輸出), Resource (資源), Control (控制與規則)。"}, {"id": 23, "chapter": "CH02 流程管理與ARIS", "title": "企業流程改善演進中，「快速修補 (Quick Fix)」的特點為何？", "options": ["A. 停掉所有資訊系統", "B. 對全公司流程進行徹底翻轉重構", "C. 導入全面品質管理 PDCA", "D. 針對區域性問題進行局部且暫時性的修正"], "ans": "D", "explanation": "Quick Fix 屬於局部、反應式、短期止血型的局部改善。"}, {"id": 24, "chapter": "CH02 流程管理與ARIS", "title": "全面品質管理 (TQM) 的核心持續改善循環稱為？", "options": ["A. PDCA (Plan-Do-Check-Act) 循環", "B. BPR 巨變循環", "C. Waterfall 瀑布模型", "D. Agile 敏捷模型"], "ans": "A", "explanation": "TQM 強調全員參與及 PDCA（計畫-執行-檢查-行動）漸進式持續改善 (Continuous Improvement)。"}, {"id": 25, "chapter": "CH02 流程管理與ARIS", "title": "企業流程再造 (BPR, Business Process Reengineering) 的核心理念為何？", "options": ["A. 對企業流程進行根本性再思考與劇烈性重新設計", "B. 每年僅微幅調整 1% 的作業流程", "C. 增加更多審核層級與紙本表單", "D. 僅維護現有舊系統"], "ans": "A", "explanation": "Hammer & Champy 提出 BPR 強調 Fundamental rethinking & Radical redesign 以達績效劇增。"}, {"id": 26, "chapter": "CH02 流程管理與ARIS", "title": "相較於 TQM 的漸進改善，BPR 改善行動的特徵為何？", "options": ["A. 微幅漸進且低風險", "B. 劇烈性 (Radical)、跨部門且高風險高報酬", "C. 僅侷限於單一作業員", "D. 不需資訊科技協助"], "ans": "B", "explanation": "BPR 屬於打破既有框架的大幅翻轉，風險高但效益亦大。"}, {"id": 27, "chapter": "CH02 流程管理與ARIS", "title": "ARIS (整合資訊系統架構) 方法論的主要用途為何？", "options": ["A. 設計電腦顯示器硬體電路", "B. 專用於計算員工每月薪資", "C. 提供完整描述企業流程與發展資訊系統的架構體系", "D. 進行企業股票評價"], "ans": "C", "explanation": "ARIS 由 August-Wilhelm Scheer 提出，為企業流程建模與資訊系統系統化分析之經典架構。"}, {"id": 28, "chapter": "CH02 流程管理與ARIS", "title": "ARIS 方法論包含四大敘述觀點，下列何者「不屬於」其中之一？", "options": ["A. 功能觀點 (Function View)", "B. 組織觀點 (Organization View)", "C. 資料觀點 (Data View)", "D. 行銷觀點 (Marketing View)"], "ans": "D", "explanation": "ARIS 四大觀點：組織 (Organization)、資料 (Data)、功能 (Function) 及控制/流程 (Control View)。"}, {"id": 29, "chapter": "CH02 流程管理與ARIS", "title": "ARIS 中的「控制觀點 (Control View)」主要扮演何種角色？", "options": ["A. 獨立計算公司營業稅", "B. 僅記錄企業硬體設備清單", "C. 整合組織、資料與功能觀點，描述流程之動態串接", "D. 控管員工出勤時間"], "ans": "C", "explanation": "控制觀點是 ARIS 的核心，將「誰(組織)在何時使用什麼(資料)執行什麼作業(功能)」整合在一起。"}, {"id": 30, "chapter": "CH02 流程管理與ARIS", "title": "ARIS 將系統描述分為三個層次，其由高至低的順序為何？", "options": ["A. 設計規格 -> 需求定義 -> 程式實作", "B. 程式實作 -> 設計規格 -> 需求定義", "C. 需求定義 -> 設計規格 -> 程式實作", "D. 需求定義 -> 程式實作 -> 設計規格"], "ans": "C", "explanation": "ARIS 3大層次：Requirement Definition (需求) -> Design Specification (設計) -> Implementation (實作)。"}, {"id": 31, "chapter": "CH02 流程管理與ARIS", "title": "在 EPC (事件驅導流程鍊) 建模中，「事件 (Event)」的特性為何？", "options": ["A. 具備決策判斷能力", "B. 代表具體執行的動作，會耗費工時", "C. 代表流程狀態的改變，是被動的且不耗費時間與資源", "D. 直接對資料庫進行寫入"], "ans": "C", "explanation": "事件 (Event) 描述「狀態」(State)，如「訂單已收到」，不耗時間資源且無主動決策力。"}, {"id": 32, "chapter": "CH02 流程管理與ARIS", "title": "在 EPC 建模中，「函數 / 活動 (Function)」的特性為何？", "options": ["A. 只是一個靜態條件描述", "B. 僅能作為流程的起點與終點", "C. 無法與組織單位連結", "D. 代表流程中的執行動作，是主動的且會消耗時間與資源"], "ans": "D", "explanation": "函數/活動 (Function) 描述「動作」(Action)，如「檢查庫存」，會消耗時間與資源。"}, {"id": 33, "chapter": "CH02 流程管理與ARIS", "title": "EPC 流程圖中，事件 (Event) 與函數 (Function) 的基本串接規則為何？", "options": ["A. 函數後面不能產生任何事件", "B. 事件後面必須連續接五個事件", "C. 事件與函數交替出現（事件觸發函數，函數執行後產生新事件）", "D. 兩者隨機擺放無規範"], "ans": "C", "explanation": "EPC 基本規則：Event 與 Function 必須交替串接，形成 Event -> Function -> Event 鏈路。"}, {"id": 34, "chapter": "CH02 流程管理與ARIS", "title": "EPC 中使用邏輯運算元「AND (∧)」表示何種分支與合流關係？", "options": ["A. 平行並行（所有分支均需同時執行或滿足）", "B. 排他單選（僅能選擇其中一個分支）", "C. 多選（可選擇一個或多個分支）", "D. 直接終止流程"], "ans": "A", "explanation": "AND (與) 代表所有平行路徑皆須執行，合流時需等待所有路徑完成。"}, {"id": 35, "chapter": "CH02 流程管理與ARIS", "title": "EPC 中使用邏輯運算元「XOR (⊗)」表示何種邏輯條件？", "options": ["A. 所有分支同時執行", "B. 排他性單選（有且僅有一個分支會被執行）", "C. 可任意選擇多個分支", "D. 無任何分支被執行"], "ans": "B", "explanation": "XOR (異或) 代表互斥條件，多個路徑中嚴格「恰好選擇一條」。"}, {"id": 36, "chapter": "CH02 流程管理與ARIS", "title": "EPC 中使用邏輯運算元「OR (∨)」表示何種邏輯條件？", "options": ["A. 代表流程出錯", "B. 嚴格只能選擇一個分支", "C. 所有分支均不可執行", "D. 包容性多選（可選擇一個、多個或全部分支執行）"], "ans": "D", "explanation": "OR (或) 代表可執行一個或多個路徑組合。"}, {"id": 37, "chapter": "CH02 流程管理與ARIS", "title": "在 EPC 標準建模規範中，若流程產生 XOR（條件判斷分支），該分叉必須接在何者之後？", "options": ["A. 資料結構之後", "B. 事件 (Event) 之後", "C. 組織圖之後", "D. 函數 (Function) 之後"], "ans": "D", "explanation": "因為「事件」本身無決策判斷能力，條件判斷 (XOR/OR) 必須由具備決策動作的「函數」後提出。"}, {"id": 38, "chapter": "CH02 流程管理與ARIS", "title": "Zachman 框架 (Zachman Framework) 在資訊系統開發中主要用途為何？", "options": ["A. 計算企業營業稅金額", "B. 用於替代程式碼編寫", "C. 僅用於設計網頁色彩", "D. 提供全方位的企業架構 (EA) 分類描述矩陣 (5W1H × 觀點)"], "ans": "D", "explanation": "Zachman 框架以 6x6 矩陣 (What, How, Where, Who, When, Why) 提供了 Enterprise Architecture 的全景圖。"}, {"id": 39, "chapter": "CH02 流程管理與ARIS", "title": "企業流程管理 (BPM) 生命週期循環通常包含哪些主要階段？", "options": ["A. 購買硬體 -> 關機 -> 賣出 -> 報廢", "B. 流程設計與建模 -> 執行 -> 監控與分析 -> 優化調整", "C. 撰寫程式 -> 銷毀 -> 重新採購 -> 結案", "D. 開會 -> 簽核 -> 存檔 -> 忘記"], "ans": "B", "explanation": "BPM 循環：Process Design/Modeling -> Execution -> Monitoring/Analytics -> Optimization。"}, {"id": 40, "chapter": "CH02 流程管理與ARIS", "title": "企業流程劃分中，「核心流程 (Core Process)」與「支援流程 (Support Process)」的最大差異為何？", "options": ["A. 核心流程直接對外部顧客創造價值，支援流程提供內部資源協助", "B. 支援流程直接向顧客收錢", "C. 核心流程不消耗任何成本", "D. 兩者完全沒有差異"], "ans": "A", "explanation": "核心流程（如 Order-to-Cash, Procure-to-Pay）直接創造顧客價值；支援流程（如 HR、IT）提供後勤。"}, {"id": 41, "chapter": "CH04 生產規劃與控制", "title": "在 ERP 生產規劃與控制 (PP) 模組中，最頂層的高階長期產銷規劃稱為？", "options": ["A. 主生產排程 (MPS)", "B. 銷售與營運規劃 (SOP, Sales and Operations Planning)", "C. 物料需求規劃 (MRP)", "D. 車間現場排程 (SFC)"], "ans": "B", "explanation": "SOP (Sales and Operations Planning) 整合銷售預測與企業產能，制定高階長期產銷計畫。"}, {"id": 42, "chapter": "CH04 生產規劃與控制", "title": "將 SOP 長期規劃拆解為特定成品/最終產品之具體生產時程與數量的規劃稱為？", "options": ["A. 領料單", "B. 採購申請單", "C. 主生產排程 (MPS, Master Production Schedule)", "D. 會計傳票"], "ans": "C", "explanation": "MPS (Master Production Schedule) 將 SOP 轉化為特定最終產品 (End Items) 的具體生產時間與數量。"}, {"id": 43, "chapter": "CH04 生產規劃與控制", "title": "生產規劃中，「獨立需求 (Independent Demand)」的主要來源為何？", "options": ["A. BOM 階層展開計算結果", "B. 客戶實際訂單與銷售預測 (Sales Forecast)", "C. 生產線損耗數量", "D. 供應商交貨延遲"], "ans": "B", "explanation": "獨立需求來自企業外部市場（客戶訂單與預測），非由其他物料直接推算。"}, {"id": 44, "chapter": "CH04 生產規劃與控制", "title": "下列何者屬於「相依需求 (Dependent Demand)」物料？", "options": ["A. 展示用的整組完工自行車", "B. 組裝自行車所需的車架與輪胎", "C. 顧客訂購的完成品自行車", "D. 獨立銷售的售後服務贈品"], "ans": "B", "explanation": "相依需求係指由成品需求透過 BOM 階層用料比例推算出的零組件或原材料需求。"}, {"id": 45, "chapter": "CH04 生產規劃與控制", "title": "物料清單 (BOM, Bill of Materials) 在生產模組中的主要功能為何？", "options": ["A. 記載製造單位成品所需之所有零組件及其階層數量結構", "B. 記錄員工每日出勤工時", "C. 計算客戶信用額度", "D. 記載發票開立金額"], "ans": "A", "explanation": "BOM 定義產品結構 (Product Structure)，載明生產一單位父階物料所需的子階用料與數量。"}, {"id": 46, "chapter": "CH04 生產規劃與控制", "title": "工作中心 (Work Center) 在生產規劃與控制模組中的定義為何？", "options": ["A. 存放成品的大型倉庫", "B. 執行生產作業的實體場所或設備，具備特定產能 (Capacity)", "C. 客戶簽收訂單的辦公室", "D. 採購人員的座位區"], "ans": "B", "explanation": "Work Center（如某機器、組裝線）為產能規劃與成本收集的基本實體單位。"}, {"id": 47, "chapter": "CH04 生產規劃與控制", "title": "工藝路線 / 製程路線 (Routing) 在生產模組中的作用為何？", "options": ["A. 記載客戶付款的銀行帳戶", "B. 規劃卡車外送貨物的地圖路線", "C. 定義產品生產的工序順序、指定工作中心及標準工時", "D. 記錄供應商聯絡方式"], "ans": "C", "explanation": "Routing 詳細記載製造產品需經過哪些工序 (Operations)、在哪些 Work Center 執行及所需工時。"}, {"id": 48, "chapter": "CH04 生產規劃與控制", "title": "當 MRP 運算完畢後，針對「自製物料 (In-house production)」會先產生何種建議單據？", "options": ["A. 銷貨發票 (Billing Document)", "B. 採購訂單 (Purchase Order)", "C. 計畫訂單 (Planned Order)", "D. 付款傳票 (Payment Voucher)"], "ans": "C", "explanation": "MRP 對自製需求會先產生 Planned Order，經確認後再轉換為正式 Production Order。"}, {"id": 49, "chapter": "CH04 生產規劃與控制", "title": "當「計畫訂單 (Planned Order)」確定要投入車間生產時，會轉換為下列何種單據？", "options": ["A. 生產訂單 (Production Order)", "B. 請購單 (Purchase Requisition)", "C. 客戶詢價單 (Inquiry)", "D. 門禁刷卡單"], "ans": "A", "explanation": "生產訂單 (Production Order) 為車間現場執行生產作業與收集成本的正式授權單據。"}, {"id": 50, "chapter": "CH04 生產規劃與控制", "title": "生產訂單在「發放 (Order Release)」之前，系統通常會自動執行哪項關鍵檢查？", "options": ["A. 員工績效考核", "B. 客戶信用卡扣款", "C. 供應商發票稽核", "D. 物料可用性檢查 (Material Availability Check)"], "ans": "D", "explanation": "Release 之前必須確認生產所需原材料是否齊備 (Availability Check) 及產能是否足夠。"}, {"id": 51, "chapter": "CH04 生產規劃與控制", "title": "生產車間向倉庫領取原材料投入生產線時，ERP 系統需執行何種異動？", "options": ["A. 客戶退貨", "B. 入庫 (Goods Receipt)", "C. 銷售過帳", "D. 發料 / 領料 (Goods Issue)"], "ans": "D", "explanation": "Goods Issue (GI) 係指將原材料由倉庫撥發至生產訂單消耗。"}, {"id": 52, "chapter": "CH04 生產規劃與控制", "title": "執行領料 (Goods Issue) 異動時，對財務與庫存帶來的影響為何？", "options": ["A. 原材料庫存減少，在製品 (WIP) 成本增加", "B. 成品庫存增加，現金增加", "C. 應付帳款增加，原材料庫存增加", "D. 無任何財務影響"], "ans": "A", "explanation": "領料使原材料庫存金額減少，成本轉入生產訂單之在製品 (Work-in-Process, WIP)。"}, {"id": 53, "chapter": "CH04 生產規劃與控制", "title": "完工報工 (Confirmation) 在生產執行過程中的主要目的為何？", "options": ["A. 變更產品設計圖", "B. 向客戶開立收款發票", "C. 向供應商下達採購單", "D. 回報實際消耗工時、完成數量與生產進度"], "ans": "D", "explanation": "Confirmation 記錄車間工序實際花費的工時與合格/報廢數量，作為結算與排程修正依據。"}, {"id": 54, "chapter": "CH04 生產規劃與控制", "title": "車間生產完工之成品撥交倉庫時，系統需執行何種庫存異動？", "options": ["A. 報廢過帳", "B. 發料 (Goods Issue)", "C. 成品入庫 (Goods Receipt)", "D. 盤虧處理"], "ans": "C", "explanation": "生產完工入庫執行 Goods Receipt (GR for Production Order)，將成品存入倉庫。"}, {"id": 55, "chapter": "CH04 生產規劃與控制", "title": "成品生產入庫 (Goods Receipt) 對庫存與會計過帳帶來的影響為何？", "options": ["A. 應付帳款增加", "B. 原材料庫存增加", "C. 成品庫存增加，貸記生產轉出/WIP 減少", "D. 銷貨收入增加"], "ans": "C", "explanation": "成品入庫增加 Finished Goods 庫存價值，同時沖減 WIP 帳戶。"}, {"id": 56, "chapter": "CH04 生產規劃與控制", "title": "生產訂單結算 (Order Settlement) 的主要目的為何？", "options": ["A. 計算員工年終獎金", "B. 比較實際生產成本與標準成本，結算並轉銷生產差異 (Variance)", "C. 向外包商收取租金", "D. 註銷企業營業執照"], "ans": "B", "explanation": "Settlement 將生產訂單累積之實際成本與標準成本比較，將產生的成本差異 (Variance) 轉銷至財務會計。"}, {"id": 57, "chapter": "CH04 生產規劃與控制", "title": "在 MRP 運算中，若物料採購策略為「外購 (External Procurement)」，會產生何種單據？", "options": ["A. 請假單", "B. 生產訂單 (Production Order)", "C. 設備維修單", "D. 採購申請單 (Purchase Requisition)"], "ans": "D", "explanation": "外購物料經 MRP 計算缺料後，會產生請購單 (Purchase Requisition)，交由採購部門處理。"}, {"id": 58, "chapter": "CH04 生產規劃與控制", "title": "產能需求規劃 (CRP) 主要依據哪些主資料來評估工作中心負擔是否過載？", "options": ["A. 公司章程與組織圖", "B. 客戶發票與收款條件", "C. 工藝路線 (Routing) 與工作中心 (Work Center) 產能資料", "D. 供應商銀行帳號"], "ans": "C", "explanation": "CRP 結合 Production Order 的 Routing 工時與 Work Center 的可用產能進行負荷比對。"}, {"id": 59, "chapter": "CH04 生產規劃與控制", "title": "物料主檔 (Material Master) 中的何種 View 與生產規劃與控制最為密不可分？", "options": ["A. 銷售組織視圖", "B. MRP 視圖與工作排程 (Work Scheduling) 視圖", "C. 採購視圖", "D. 品質檢驗視圖"], "ans": "B", "explanation": "MRP Views 及 Work Scheduling View 存放了批次大小、前置時間、安全庫存等生產關鍵參數。"}, {"id": 60, "chapter": "CH04 生產規劃與控制", "title": "精實生產中「推式 (Push)」與「拉式 (Pull)」生產控制的主要差異為何？", "options": ["A. 拉式只能生產食品", "B. 推式完全不使用任何機器", "C. 推式依預測排程推動生產，拉式由下游實際需求觸發生產", "D. 兩者均不需任何原材料"], "ans": "C", "explanation": "Push 依據 MPS/MRP 預測排程生產；Pull (如 Kanban) 則由後製程/客戶實際消耗觸發前製程補充。"}, {"id": 61, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 產品名稱中的 'S/4' 代表什麼意思？", "options": ["A. Simple / 4th Generation Suite (第四代簡化套件)", "B. Speed / 4 Hours", "C. Super / 4 Modules", "D. System / 4 Users"], "ans": "A", "explanation": "S/4HANA 代表 SAP 第四代商務套件，核心理念為 'Simple'（簡化資料結構與操作）。"}, {"id": 62, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 最核心的技術基礎與突破為何？", "options": ["A. 改用微軟 Access 資料庫", "B. 採用 In-Memory 記憶體資料庫技術 (SAP HANA)", "C. 完全取消資料庫系統", "D. 僅支援紙本作業"], "ans": "B", "explanation": "SAP HANA 記憶體資料庫技術將資料載入 RAM 中運算，提供極高的即時資料處理能力。"}, {"id": 63, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 採用的全新跨裝置使用者體驗 (UX) 介面稱為？", "options": ["A. SAP GUI (傳統介面)", "B. SAP Fiori", "C. DOS 介面", "D. Windows Command Prompt"], "ans": "B", "explanation": "SAP Fiori 是 S/4HANA 的新一代現代化 UX，支援 Mobile/Tablet/Desktop 跨裝置存取。"}, {"id": 64, "chapter": "SAP S/4HANA 核心", "title": "下列何者「不屬於」SAP Fiori 介面的三大設計原則？", "options": ["A. 複雜多重選單 (Complex Multi-nested)", "B. 角色導向 (Role-based)", "C. 簡單直覺 (Simple)", "D. 響應式跨裝置 (Responsive)"], "ans": "A", "explanation": "Fiori 設計原則為：1. Role-based, 2. Delightful, 3. Simple, 4. Responsive, 5. Coherent。"}, {"id": 65, "chapter": "SAP S/4HANA 核心", "title": "在 SAP 組織資料 (Organizational Data) 中，代表合法獨立財務會計單位的最高層級為？", "options": ["A. 儲存位置 (Storage Location)", "B. 公司碼 (Company Code)", "C. 銷售組 (Sales Group)", "D. 採購員 (Purchaser)"], "ans": "B", "explanation": "Company Code 為產生資產負債表與損益表等法定財務報表的最小獨立會計單位。"}, {"id": 66, "chapter": "SAP S/4HANA 核心", "title": "在 SAP 系統架構中，代表最高層級、資料庫中獨立隔離的系統區域稱為？", "options": ["A. Client (用戶 / 客戶)", "B. Plant (廠區)", "C. Storage Location", "D. Sales Area"], "ans": "A", "explanation": "Client 是 SAP 系統中的最高層級，主資料與系統設定可於 Client 層級共用或隔離。"}, {"id": 67, "chapter": "SAP S/4HANA 核心", "title": "SAP 系統中代表實體生產廠房、物流分銷中心或營運據點的組織單位為？", "options": ["A. Storage Section", "B. Company Code", "C. Client", "D. Plant (廠區 / 工廠)"], "ans": "D", "explanation": "Plant 是執行生產、物料需求規劃 (MRP) 及庫存評估的核心實體組織單位。"}, {"id": 68, "chapter": "SAP S/4HANA 核心", "title": "隸屬於 Plant 之下，用於區分實體物料存放區域的組織單位稱為？", "options": ["A. Company Code", "B. Storage Location (儲存位置)", "C. Sales Organization", "D. Purchasing Group"], "ans": "B", "explanation": "Storage Location (SLoc) 代表工廠內部具體的物料存放位置（如原料倉、成品倉）。"}, {"id": 69, "chapter": "SAP S/4HANA 核心", "title": "SAP 中「主資料 (Master Data)」的主要特徵為何？", "options": ["A. 每次交易完成後自動被系統銷毀", "B. 長期存在且被多個業務模組（SD, MM, FI）共同頻繁引用", "C. 僅能儲存數字無法儲存文字", "D. 每秒鐘會自動隨機變更"], "ans": "B", "explanation": "Master Data（如物料、客戶主檔）為企業業務流程運作的集中式核心資料。"}, {"id": 70, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 將傳統 ERP 中的「客戶」與「供應商」主檔統一整合為何種新概念？", "options": ["A. 超級使用者 (Superuser)", "B. 商業夥伴 (Business Partner, BP)", "C. 外包商 (Outsourcer)", "D. 系統管理員 (Admin)"], "ans": "B", "explanation": "S/4HANA 採用 Business Partner (BP) 概念，統一管理所有與企業發生業務往來的實體。"}, {"id": 71, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 記憶體資料庫對資料表結構帶來何種極致簡化的效益？", "options": ["A. 增加了一千張額外轉置表", "B. 大幅消除傳統 ERP 中的中間彙總表 (Aggregates) 與索引表", "C. 強制將資料轉為文字檔", "D. 不允許執行 SQL 查詢"], "ans": "B", "explanation": "HANA 高速運算能力可直接對底層交易明細表進行即時計算，無需預先計算與儲存彙總表。"}, {"id": 72, "chapter": "SAP S/4HANA 核心", "title": "SAP 中的「交易資料 (Transaction Data)」通常由哪些要素所組合而成？", "options": ["A. 僅包含公司地址", "B. 僅包含員工個人姓名", "C. 組織資料 + 主資料 + 具體業務事件數據 (時間、數量、金額)", "D. 僅包含電腦 IP 位置"], "ans": "C", "explanation": "交易單據（如 PO、Sales Order）係調用主資料與組織資料，並記錄特定時間發生的數量與金額。"}, {"id": 73, "chapter": "SAP S/4HANA 核心", "title": "下列何者「不屬於」SAP S/4HANA 提供的系統部署模式 (Deployment Options)？", "options": ["A. 地端部署 (On-Premise)", "B. 純紙本表單人工登記模式", "C. 公有雲 / 私有雲訂閱 (Cloud)", "D. 混合部署 (Hybrid)"], "ans": "B", "explanation": "S/4HANA 提供 On-Premise、Cloud 及 Hybrid 現代化部署，不含純人工模式。"}, {"id": 74, "chapter": "SAP S/4HANA 核心", "title": "在 SAP Fiori 應用程式類型中，專用於執行日常作業交易（如建立銷售訂單）的是？", "options": ["A. 系統設定 App", "B. 分析型 App (Analytical Apps)", "C. 事實頁面 App (Fact Sheet Apps)", "D. 交易型 App (Transactional Apps)"], "ans": "D", "explanation": "Transactional Apps 用於常規的 Create/Change/Display 業務交易作業。"}, {"id": 75, "chapter": "SAP S/4HANA 核心", "title": "在 SAP Fiori 應用程式類型中，提供即時視覺化圖表與管理 KPI 監控的是？", "options": ["A. 文字編輯 App", "B. 交易型 App", "C. 事實頁面 App", "D. 分析型 App (Analytical Apps)"], "ans": "D", "explanation": "Analytical Apps 提供即時商業分析圖表與 KPI Dashboard。"}, {"id": 76, "chapter": "SAP S/4HANA 核心", "title": "在 SAP Fiori 應用程式類型中，用於關鍵字快速搜尋並顯示主資料全貌與關聯鏈結的是？", "options": ["A. 事實頁面 App (Fact Sheet Apps)", "B. 交易型 App", "C. 分析型 App", "D. 試算表 App"], "ans": "A", "explanation": "Fact Sheet Apps 類似搜尋引擎，點擊可快速展開物件（如客戶、訂單）的 360 度關聯視圖。"}, {"id": 77, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 財務模組將 FI 與 CO 明細資料統一儲存於哪張核心日記帳表？", "options": ["A. MARA 表", "B. BSEG 表", "C. Universal Journal (ACDOCA 表)", "D. VBAK 表"], "ans": "C", "explanation": "Universal Journal (Single Source of Truth) 將所有財務與管理會計明細整合於 ACDOCA 資料表。"}, {"id": 78, "chapter": "SAP S/4HANA 核心", "title": "SAP S/4HANA 資料庫同時支援列導向 (Row-store) 與行導向 (Column-store)，其優勢為何？", "options": ["A. 行導向極適合巨量資料分析與高倍率壓縮，列導向適合單筆交易", "B. 大幅降低電腦記憶體容量", "C. 限制使用者只能看單一欄位", "D. 提高系統印表機列印速度"], "ans": "A", "explanation": "Column-store 具高壓縮率與超高速分析效能，Row-store 適合傳統交易，HANA 兼具兩者優勢。"}, {"id": 79, "chapter": "SAP S/4HANA 核心", "title": "在 SAP 組織架構中，銷售組織 (Sales Organization) 隸屬於哪一個業務模組？", "options": ["A. MM (物料管理模組)", "B. SD (銷售與分銷模組)", "C. PP (生產規劃模組)", "D. FI (財務會計模組)"], "ans": "B", "explanation": "Sales Org 是 SD 模組中負責產品與服務銷售及法律責任的核心組織單位。"}, {"id": 80, "chapter": "SAP S/4HANA 核心", "title": "採購組織 (Purchasing Organization) 在 SAP 中隸屬於哪一個模組？", "options": ["A. MM (物料管理模組)", "B. SD (銷售與分銷模組)", "C. CO (管理會計模組)", "D. HCM (人力資源模組)"], "ans": "A", "explanation": "Purchasing Org 是 MM 模組中負責向供應商談判採購條件與簽訂合約的組織單位。"}, {"id": 81, "chapter": "Global Bike 實務", "title": "Global Bike Group (GBI) 企業範例中，兩位創辦人分別來自哪兩個國家？", "options": ["A. 美國 (US) 與德國 (DE)", "B. 日本與韓國", "C. 英國與法國", "D. 中國與加拿大"], "ans": "A", "explanation": "GBI 創辦人 John Davis (US) 與 Peter Schwarz (Germany) 分別代表美國與德國營運區。"}, {"id": 82, "chapter": "Global Bike 實務", "title": "Global Bike (GBI) 公司的主要核心營運產品線為何？", "options": ["A. 辦公室桌椅與家具", "B. 豪華電動汽車與快艇", "C. 智慧型手機與平板電腦", "D. 高性能越野自行車、旅行自行車及其配件"], "ans": "D", "explanation": "GBI 是一家專門製造與銷售高品質自行車 (Off-Road & Touring Bikes) 的虛擬企業。"}, {"id": 83, "chapter": "Global Bike 實務", "title": "GBI 企業架構中，代表美國與德國的兩大公司碼 (Company Code) 代碼分別為何？", "options": ["A. US00 與 DE00", "B. US11 與 DE22", "C. GB01 與 GB02", "D. AA00 與 BB00"], "ans": "A", "explanation": "US00 代表 Global Bike Inc. (US)，DE00 代表 Global Bike Germany GmbH。"}, {"id": 84, "chapter": "Global Bike 實務", "title": "在 GBI 美國公司的組織架構中，主要的生產與物流工廠 (Plant) 位於哪些城市？", "options": ["A. 紐約與洛杉磯", "B. 達拉斯 (Dallas) 與邁阿密 (Miami)", "C. 芝加哥與西雅圖", "D. 舊金山與波士頓"], "ans": "B", "explanation": "GBI 美國廠區位於 Dallas (DL00，製造與倉儲) 及 Miami (MI00，物流與分銷)。"}, {"id": 85, "chapter": "Global Bike 實務", "title": "GBI 位於德國 (DE00) 的主要生產與組裝工廠位於哪一個城市？", "options": ["A. 慕尼黑 (Munich)", "B. 柏林 (Berlin)", "C. 海德堡 (Heidelberg)", "D. 法蘭克福 (Frankfurt)"], "ans": "C", "explanation": "GBI 德國廠區位於 Heidelberg (HD00)。"}, {"id": 86, "chapter": "Global Bike 實務", "title": "在 GBI 物料分類中，組裝完成可直接販售給客戶的自行車屬於何種物料類型？", "options": ["A. 服務類物料", "B. 原材料 (Raw Materials, ROH)", "C. 半成品 (HALB)", "D. 成品 (Finished Goods, FERTI)"], "ans": "D", "explanation": "組裝好的整車自行車屬於 Finished Goods (FERT)。"}, {"id": 87, "chapter": "Global Bike 實務", "title": "在 Order-to-Cash (銷售流程) 中，企業端接獲業務機會的第一個觸發點通常為何？", "options": ["A. 直接出貨給客戶", "B. 直接向客戶請款", "C. 接獲客戶詢價 (Inquiry) 或建立報價單 (Quotation)", "D. 向供應商下單"], "ans": "C", "explanation": "銷售流程起源於 Pre-sales activities，如 Customer Inquiry 或 Quotation。"}, {"id": 88, "chapter": "Global Bike 實務", "title": "Order-to-Cash (訂單到收款) 完整業務流程的正確順序為何？", "options": ["A. 收到付款 -> 開立發票 -> 銷售訂單 -> 揀貨發貨", "B. 開立發票 -> 銷售訂單 -> 收到付款 -> 揀貨發貨", "C. 銷售訂單 -> 揀貨發貨 (Goods Issue) -> 開立發票 (Billing) -> 收到付款", "D. 揀貨發貨 -> 收到付款 -> 開立發票 -> 銷售訂單"], "ans": "C", "explanation": "標準銷售流程：Sales Order -> Outbound Delivery & GI -> Billing -> Customer Payment。"}, {"id": 89, "chapter": "Global Bike 實務", "title": "在銷售流程中，執行過帳發貨 (Goods Issue) 時，會計傳票的借貸異動為何？", "options": ["A. 借記：應付帳款，貸記：原材料庫存", "B. 借記：現金，貸記：銷貨收入", "C. 借記：銷貨成本 (COGS)，貸記：成品庫存 (Finished Goods)", "D. 借記：成品庫存，貸記：銷貨成本"], "ans": "C", "explanation": "Goods Issue 代表庫存減少與成本發生：Dr. Cost of Goods Sold / Cr. Finished Goods Inventory。"}, {"id": 90, "chapter": "Global Bike 實務", "title": "Procure-to-Pay (採購到付款) 流程的業務起點通常為何？", "options": ["A. 直接向客戶開立發票", "B. 直接支付現金給供應商", "C. 內部提出請購單 (Purchase Requisition) 或採購單 (Purchase Order)", "D. 車間完工報工"], "ans": "C", "explanation": "採購流程起於內部缺料產生的 Purchase Requisition (請購單) 或直接開立 Purchase Order (採購單)。"}, {"id": 91, "chapter": "Global Bike 實務", "title": "Procure-to-Pay 完整採購流程的正確過帳順序為何？", "options": ["A. 發票驗證 -> 付款 -> 採購單 -> 收貨", "B. 付款 -> 發票驗證 -> 收貨 -> 採購單", "C. 採購單 -> 收貨 (Goods Receipt) -> 發票驗證 (Invoice Verification) -> 付款", "D. 收貨 -> 付款 -> 發票驗證 -> 採購單"], "ans": "C", "explanation": "標準採購流程：Purchase Order -> Goods Receipt (GR) -> Invoice Receipt (IR) -> Payment。"}, {"id": 92, "chapter": "Global Bike 實務", "title": "採購原材料過帳收貨 (Goods Receipt) 時，會計傳票的借貸異動為何？", "options": ["A. 借記：現金，貸記：原材料庫存", "B. 借記：應付帳款，貸記：現金", "C. 借記：銷貨成本，貸記：應收帳款", "D. 借記：原材料庫存，貸記：GR/IR 暫估帳戶"], "ans": "D", "explanation": "收貨增加庫存並立暫估負債：Dr. Raw Materials Inventory / Cr. Goods Receipt/Invoice Receipt (GR/IR)。"}, {"id": 93, "chapter": "Global Bike 實務", "title": "採購發票驗證 (Invoice Verification) 採用的「三方比對 (Three-Way Match)」包含哪三張單據？", "options": ["A. 請購單、生產訂單、報廢單", "B. 客戶訂單、出貨單、客戶支票", "C. 員工請假單、薪資單、扣繳憑單", "D. 採購單 (PO)、收貨單 (GR)、供應商發票 (Vendor Invoice)"], "ans": "D", "explanation": "Three-Way Match 確保數量與單價一致：比對 Purchase Order、Goods Receipt Note 與 Vendor Invoice。"}, {"id": 94, "chapter": "Global Bike 實務", "title": "GBI 採購流程中，設置 GR/IR (收貨/發票暫估) 清算帳戶的主要目的為何？", "options": ["A. 計算員工銷售獎金", "B. 解決實體物料收貨與供應商發票到達時間不一致的過渡性過帳", "C. 存放客戶繳交的保證金", "D. 支付給政府的稅金帳戶"], "ans": "B", "explanation": "GR/IR 是 Clearing Account，用於銜接收貨與發票到達的時間差，當兩者均完成時該帳戶自動沖平。"}, {"id": 95, "chapter": "Global Bike 實務", "title": "在 GBI 生產自行車的過程中，跨模組整合需要的關鍵主資料不包含何者？", "options": ["A. 客戶信用額度主檔", "B. 物料清單 (BOM)", "C. 工藝路線 (Routing)", "D. 工作中心 (Work Center)"], "ans": "A", "explanation": "生產流程主要使用 BOM、Routing 及 Work Center；客戶信用額度為 SD 模組主資料。"}, {"id": 96, "chapter": "Global Bike 實務", "title": "當客戶下達自行車訂單時，SD 模組會自動向哪個模組進行 ATP (可承諾量) 庫存確認？", "options": ["A. PM (設備維護模組)", "B. HCM (人力資源模組)", "C. QM (品質管理模組)", "D. MM (物料管理模組)"], "ans": "D", "explanation": "SD 建立 Sales Order 時，系統自動向 MM/Inventory Management 查詢庫存與可用量 (ATP Check)。"}, {"id": 97, "chapter": "Global Bike 實務", "title": "GBI 銷售訂單完成發貨 (Goods Issue) 扣減庫存時，系統自動觸發哪個財務模組過帳？", "options": ["A. Basis (系統維護)", "B. HCM (人力資源)", "C. FI (財務會計) 與 CO (管理會計)", "D. Workflow"], "ans": "C", "explanation": "GI 會自動產生 FI 財務過帳憑證 (COGS & Inventory) 與 CO 成本物件控制過帳。"}, {"id": 98, "chapter": "Global Bike 實務", "title": "在 GBI SAP S/4HANA 系統中，商業夥伴 (Business Partner) 的主要角色包含？", "options": ["A. 僅包含系統外部駭客", "B. 僅包含公司內部股東", "C. 客戶 (Customers) 與供應商 (Vendors)", "D. 僅包含報社記者"], "ans": "C", "explanation": "BP (Business Partner) 統一涵蓋客戶 (Customer) 與供應商 (Vendor) 角色。"}, {"id": 99, "chapter": "Global Bike 實務", "title": "GBI 在美國的主要發貨與物流中心 (Distribution Center) 包含下列何者？", "options": ["A. 倫敦與巴黎", "B. 邁阿密 (Miami) 與聖地牙哥 (San Diego)", "C. 東京與雪梨", "D. 北京與上海"], "ans": "B", "explanation": "GBI 美國物流分銷中心位於 Miami (MI00) 及 San Diego (SD00)。"}, {"id": 100, "chapter": "Global Bike 實務", "title": "GBI 企業案例在 ERP 課程教學中的核心價值與目標為何？", "options": ["A. 示範現代企業如何透過 SAP 實現跨模組 (SD/MM/PP/FI) 流程整合與資料共享", "B. 教導學生如何手動製作自行車輪胎", "C. 比較各國自行車比賽規則", "D. 介紹美國與德國的旅遊景點"], "ans": "A", "explanation": "GBI 係 SAP 官方經典教學模型，旨在讓學生親身實作與體驗 Enterprise Process Integration 的全貌。"}];
+
+        let selectedOrderMode = 'sequential'; // 'sequential' or 'random'
+        let currentQuizList = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // qId -> { selectedLetter: "...", isCorrect: true/false }
+        let correctCount = 0;
+        let wrongCount = 0;
+
+        function setOrderMode(mode) {
+            selectedOrderMode = mode;
+            document.getElementById('modeBtnSequential').classList.toggle('active', mode === 'sequential');
+            document.getElementById('modeBtnRandom').classList.toggle('active', mode === 'random');
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function parseOption(optStr) {
+            const match = optStr.match(/^([A-D])\.\s*(.*)/);
+            if (match) {
+                return { letter: match[1], text: match[2].trim(), raw: optStr };
+            }
+            return { letter: optStr.substring(0, 1).toUpperCase(), text: optStr.substring(1).trim(), raw: optStr };
+        }
+
+        function startQuiz() {
+            const scope = document.getElementById('scopeSelect').value;
+            const doShuffleOptions = document.getElementById('shuffleOptionsCheck').checked;
+            let filtered = [];
+
+            if (scope === 'ALL') {
+                filtered = rawDatabase.map(q => JSON.parse(JSON.stringify(q)));
+            } else {
+                filtered = rawDatabase.filter(q => q.chapter === scope).map(q => JSON.parse(JSON.stringify(q)));
+            }
+
+            if (selectedOrderMode === 'random') {
+                filtered = shuffleArray(filtered);
+            }
+
+            filtered.forEach(q => {
+                let parsedOpts = q.options.map(opt => parseOption(opt));
+                
+                let correctOriginalTexts = [];
+                parsedOpts.forEach(po => {
+                    if (q.ans.includes(po.letter)) {
+                        correctOriginalTexts.push(po.text);
+                    }
+                });
+
+                if (doShuffleOptions) {
+                    parsedOpts = shuffleArray(parsedOpts);
+                }
+
+                const letters = ['A', 'B', 'C', 'D'];
+                let newOptionsList = [];
+                let newAnsLetters = [];
+
+                parsedOpts.forEach((po, index) => {
+                    const newLetter = letters[index] || po.letter;
+                    const newOptStr = `${newLetter}. ${po.text}`;
+                    po.currentLetter = newLetter;
+                    po.displayStr = newOptStr;
+                    newOptionsList.push(newOptStr);
+
+                    if (correctOriginalTexts.includes(po.text)) {
+                        newAnsLetters.push(newLetter);
+                    }
+                });
+
+                q.displayOptions = newOptionsList;
+                q.displayAns = newAnsLetters.join(',');
+                q.parsedOpts = parsedOpts;
+            });
+
+            currentQuizList = filtered;
+            userAnswers = {};
+            correctCount = 0;
+            wrongCount = 0;
+            currentIndex = 0;
+
+            document.getElementById('correctCount').innerText = '0';
+            document.getElementById('wrongCount').innerText = '0';
+
+            const modeLabel = selectedOrderMode === 'random' ? '🔀 隨機題目' : '📌 順序題目';
+            const optLabel = doShuffleOptions ? ' + 🔀 隨機選項' : '';
+            const scopeText = scope === 'ALL' ? '全部 100 題' : scope;
+            document.getElementById('currentModeTag').innerText = `${modeLabel}${optLabel} | ${scopeText} (共 ${currentQuizList.length} 題)`;
+
+            document.getElementById('setupView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'none';
+            document.getElementById('quizView').style.display = 'block';
+
+            renderQuestion();
+            renderPagination();
+        }
+
+        function restartCurrentQuiz() {
+            startQuiz();
+        }
+
+        function exitToSetup() {
+            document.getElementById('quizView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'none';
+            document.getElementById('setupView').style.display = 'block';
+        }
+
+        function renderQuestion() {
+            if (currentQuizList.length === 0) return;
+            const q = currentQuizList[currentIndex];
+            const container = document.getElementById('quizContainer');
+            const record = userAnswers[q.id];
+
+            let optionsHtml = '';
+            q.parsedOpts.forEach((po) => {
+                let btnClass = 'option-btn';
+                let disabled = '';
+
+                if (record) {
+                    disabled = 'disabled';
+                    if (record.selectedLetter === po.currentLetter) {
+                        btnClass += record.isCorrect ? ' selected-correct' : ' selected-wrong';
+                    } else if (!record.isCorrect && q.displayAns.includes(po.currentLetter)) {
+                        btnClass += ' show-truth';
+                    }
+                }
+
+                optionsHtml += `<button class="${btnClass}" ${disabled} onclick="selectOption('${q.id}', '${po.currentLetter}')">
+                    ${po.displayStr}
+                </button>`;
+            });
+
+            let feedbackHtml = '';
+            if (record) {
+                if (record.isCorrect) {
+                    feedbackHtml = `
+                        <div class="feedback-box correct">
+                            <strong>🎉 回答正確！</strong> 答案即為 [ ${q.displayAns} ]
+                            <div class="explanation-box">💡 <strong>觀念解析：</strong>${q.explanation}</div>
+                        </div>`;
+                } else {
+                    feedbackHtml = `
+                        <div class="feedback-box wrong">
+                            ❌ <strong>回答錯誤！</strong> 您選擇了 (${record.selectedLetter})<br>
+                            👉 正確答案為：<strong>[ ${q.displayAns} ]</strong>
+                            <div class="explanation-box">💡 <strong>觀念解析：</strong>${q.explanation}</div>
+                        </div>`;
+                }
+            }
+
+            container.innerHTML = `
+                <div class="quiz-card">
+                    <div class="q-header">
+                        <span class="q-tag">${q.chapter}</span>
+                        <span class="q-num">第 ${currentIndex + 1} / ${currentQuizList.length} 題（原題號：${q.id}）</span>
+                    </div>
+                    <div class="q-title">${q.title}</div>
+                    <div class="options-list">${optionsHtml}</div>
+                    ${feedbackHtml}
+                </div>
+            `;
+
+            document.getElementById('prevBtn').disabled = (currentIndex === 0);
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentIndex === currentQuizList.length - 1) {
+                nextBtn.innerText = '🏁 完成作答';
+                nextBtn.onclick = function() { checkFinish(); };
+            } else {
+                nextBtn.innerText = '下一題 →';
+                nextBtn.onclick = function() { changeQuestion(1); };
+            }
+
+            updatePaginationActive();
+        }
+
+        function selectOption(qId, selectedLetter) {
+            const q = currentQuizList.find(item => item.id == qId);
+            if (!q || userAnswers[qId]) return;
+
+            const isCorrect = q.displayAns.trim() === selectedLetter.trim();
+
+            userAnswers[qId] = {
+                selectedLetter: selectedLetter,
+                isCorrect: isCorrect
+            };
+
+            if (isCorrect) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+
+            document.getElementById('correctCount').innerText = correctCount;
+            document.getElementById('wrongCount').innerText = wrongCount;
+
+            renderQuestion();
+            renderPagination();
+        }
+
+        function changeQuestion(dir) {
+            const newIndex = currentIndex + dir;
+            if (newIndex >= 0 && newIndex < currentQuizList.length) {
+                currentIndex = newIndex;
+                renderQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = index;
+            renderQuestion();
+        }
+
+        function checkFinish() {
+            showResult();
+        }
+
+        function showResult() {
+            const total = currentQuizList.length;
+            const scorePercent = Math.round((correctCount / total) * 100);
+
+            document.getElementById('quizView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'block';
+
+            document.getElementById('resultScoreText').innerText = `${correctCount} / ${total} 題 (${scorePercent}分)`;
+            document.getElementById('resultDetailText').innerText = `正確率：${scorePercent}% | 正確 ${correctCount} 題 ‧ 錯誤 ${wrongCount} 題 ‧ 未答 ${total - correctCount - wrongCount} 題`;
+        }
+
+        function renderPagination() {
+            const bar = document.getElementById('paginationBar');
+            let html = '';
+            currentQuizList.forEach((q, idx) => {
+                const rec = userAnswers[q.id];
+                let statusClass = '';
+                if (rec) {
+                    statusClass = rec.isCorrect ? 'done-correct' : 'done-wrong';
+                }
+                if (idx === currentIndex) {
+                    statusClass += ' active';
+                }
+
+                html += `<div class="page-num ${statusClass}" onclick="jumpToQuestion(${idx})">${idx + 1}</div>`;
+            });
+            bar.innerHTML = html;
+        }
+
+        function updatePaginationActive() {
+            const pageBtns = document.querySelectorAll('.page-num');
+            pageBtns.forEach((btn, idx) => {
+                if (idx === currentIndex) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
